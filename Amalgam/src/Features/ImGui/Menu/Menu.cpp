@@ -236,7 +236,7 @@ void CMenu::DrawMenu()
 				{ "AIMBOT", "GENERAL" },
 				{ "VISUALS", "ESP", "AIMDRAW", "MISC##", "MENU" },
 				{ "HVH", "MAIN" },
-				{ "MISC", "MAIN", "BOT"},
+				{ "MISC", "MAIN", "BOT", "LANGUAGE" },
 				{ "ANTICHEAT", "CHEATERS", "DETECTION" },
 				{ "LOGS", "PLAYERLIST", "SETTINGS##", "OUTPUT" },
 				{ "SETTINGS", "CONFIG", "BINDS", "MATERIALS", "EXTRA" }
@@ -1503,7 +1503,10 @@ void CMenu::MenuMisc(int iTab)
 					FToggle(Vars::Misc::Sound::RemoveDSP, FToggleEnum::Right);
 					FToggle(Vars::Misc::Sound::GiantWeaponSounds);
 				} EndSection();
-			}
+				if (Section("Language", 8))
+                {
+                   FDropdown(Vars::Misc::Language);
+			    }
 			EndTable();
 		}
 		break;
@@ -1622,7 +1625,8 @@ void CMenu::MenuMisc(int iTab)
 					} EndSection();
 				}
 			}
-
+}
+EndTable();
 			/* Column 2 */
 			TableNextColumn();
 			{
@@ -1746,6 +1750,7 @@ void CMenu::MenuMisc(int iTab)
 	}
 	}
 }
+
 
 void CMenu::MenuAnticheat(int iTab)
 {
@@ -4637,6 +4642,27 @@ static inline void ManageVars()
 }
 
 void CMenu::Render()
+{
+    ImGuiIO& io = ImGui::GetIO();
+
+    // 检查是否已加载中文字体（可根据字体数量判断）
+    if (io.Fonts->Fonts.Size < 2) // 假设已有默认字体，加载后至少有两个字体
+    {
+        ImFontConfig config;
+        config.MergeMode = true; // 合并模式，保留英文字体
+        config.PixelSnapH = true;
+
+        // 加载中文字体（使用系统字体或相对路径）
+        io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\msyh.ttc", 18.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
+        io.Fonts->Build();
+
+        // 通知渲染后端重建字体纹理
+        ImGui_ImplDX9_InvalidateDeviceObjects();
+        ImGui_ImplDX9_CreateDeviceObjects();
+    }
+
+    // ... 原有渲染代码
+}
 {
 	using namespace ImGui;
 
